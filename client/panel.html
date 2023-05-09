@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Irminsul</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <link rel="stylesheet" href="panel.css">
+    </head>
+    
+    <body>
+        <div style="display: inline-flex;"><h1 class="box"><img src="icon_512.png" width="20%">Irminsul</h1><img src="" id="pdp" class="pdp hide" width="15%"></div>
+
+        <div id="discord" class="hide">
+            <button id="discord-login">Se connecter via discord</button>
+        </div>
+
+        <div id="content">
+            <!--<div id="tools" class="box">
+                <a href="tools/wish-list/page.html"><img src="imgs/Wish.png"></a>
+            </div>-->
+
+            <div id="birthday" class="hide box">
+                <img src="" id="birthday-icon">
+                <p id="birthday-text"></p>
+            </div>
+            <div class="box">
+                <img src="imgs/Résine originelle.png" width="30%">
+                <div>
+                    <h3>Résine :</h3>
+                    <p id="resin-count">Récupération des informations...</p>
+                    <p id="resin-timer"></p>
+                </div>
+            </div>
+
+            <div class="box" style="display: block;">
+                <h3>
+                    <span class="dropdown" drop="expeditions">></span>
+                    <img src="imgs/Expedition.png" width="10%">
+                    Expéditions :
+                </h3>
+                <p id="expeditions-getting">Récupération des informations...</p>
+                <ul id="expeditions"></ul>
+                <p id="expeditions-count"></p>
+            </div>
+
+            <div class="box">
+                <img src="imgs/Pièce du royaume.png" width="30%">
+                <div>
+                    <h3>Pièces du royaume :</h3>
+                    <p id="realmCurrency-count">Récupération des informations...</p>
+                    <p id="realmCurrency-timer"></p>
+                </div>
+            </div>
+
+            <div class="box">
+                <img src="imgs/Transformer.png" width="30%">
+                <div>
+                    <h3>Transformateur paramétrique :</h3>
+                    <p id="transformer">Récupération des informations...</p>
+                </div>
+            </div>
+
+            <div class="box" style="display: block; padding: 2px;">
+                <h3>
+                    <span class="dropdown" drop="events">></span>
+                    <img src="imgs/Events.png" width="13%">
+                    Prochains événements :
+                </h3>
+                <ul id="events"></ul>
+            </div>
+
+            <!--<div class="box">
+                <h3>
+                    <span class="dropdown" drop="farming">></span>
+                    Que farmer aujourd'hui ?
+                </h3>
+                
+                <p>
+                    <label for="farming-day">Seulement aujourd'hui</label>
+                    <input type="checkbox" id="farming-day" checked="true">
+                    <span class="checkmark"></span>
+                    <br><br>
+                    <label for="farming-level_min">Personnages de niveau supérieur à :</label>
+                    <input type="number" id="farming-level_min" value="1" placeholder="...">
+                </p>
+
+                <ul id="farming"></ul>
+            </div>-->
+
+            <div class="box">
+                <h4><img browse="https://act.hoyolab.com/ys/event/signin-sea-v3/index.html?act_id=e202102251931481" src="imgs/Check-in.png" width="13%">Connexion quotidienne automatique : <span id="auto-checkin" class="prevent-select">🔄️</span></h4>
+            </div>
+        </div>
+
+        <script src="functions.js"></script>
+        <script src="panel.js"></script>
+    </body>
+</html>

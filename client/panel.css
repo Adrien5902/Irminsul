@@ -1,0 +1,187 @@
+@font-face {
+    font-family: "Genshin";
+    src: url("font.ttf");
+}
+
+body{
+    background: #474747;
+    color: #FFFFFF;
+    text-align: center;
+    font-family: "Genshin", 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.box{
+    background: #373737;
+    border-radius: 12px;
+    margin: 12px;
+    font-size: 5em;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+p{
+    margin: 18px;
+    font-size: 4vw;
+}
+
+h1{
+    font-size: 9vw !important;
+}
+
+h3, h4{
+    margin: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+h3{
+    font-size: 5.3vw;
+}
+
+h4{
+    font-size: 4.5vw;
+}
+
+.hide{
+    display: none !important;
+}
+
+button, .button{
+    color: white;
+    background: #6670e4;
+    font-weight: bold;
+    font-size: 1.2em;
+    padding: 12px;
+    border-radius: 3px;
+    margin: 10px;
+    border: 0;
+    cursor: pointer;
+    text-decoration: none;
+
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+#expeditions img{
+    width: 20%;
+    border-radius: 100%;
+}
+
+ul li{
+    font-size: 4.5vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 12px;
+    background: #606060;
+    border-radius: 1em;
+    padding: 12px;
+}
+
+ul{
+    margin: 0;
+    padding: 0;
+}
+
+
+.pdp{
+    border-radius: 100%;
+    margin: 24px;
+}
+
+.error{
+    color: red;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #bebebe;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+#auto-checkin{
+    cursor: pointer;
+}
+
+.prevent-select {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+.dropdown{
+    transition: 100ms;
+    margin: 18px;
+    font-size: 1.5em;
+    cursor: pointer;
+
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+input[type="text"], input[type="number"]{
+    border-radius: .5em;
+    border: none;
+    background-color: #6a6a6a;
+    padding: 8px;
+    color: #d5d5d5;
+}
+
+*:focus {outline:none !important}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+    width: 5em;
+    text-align: right;
+}
+
+input, textarea{
+    box-sizing: border-box;
+    width: inherit;
+    height: inherit;
+    font-family:inherit;
+    font-size: .8em;
+}
+
+#tools{
+    justify-content: left;
+}
+
+#tools a{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 4px;
+}
+
+#tools img{
+    width: 50%;
+}
+
+[browse]{
+    cursor: pointer;
+}

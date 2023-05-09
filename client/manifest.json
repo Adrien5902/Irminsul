@@ -1,0 +1,23 @@
+{
+	"manifest_version": 3,
+
+	"name": "Irminsul",
+    "author": "Adrien5902",
+	"description": "Extension Irminsul pour Genshin Impact par Adrien5902",
+	"version": "1.2.2",
+    
+    "icons":
+    {
+        "512": "icon_512.png"
+    },
+
+    "sidebar_action": {
+        "default_icon": "icon_512.png",
+        "default_title": "Irminsul",
+        "default_panel": "panel.html"
+    },
+
+    "update_url": "https://adrien5902.ddns.net/genshin-impact/irminsul/extension/update_manifest.json",
+
+	"permissions": []
+}
