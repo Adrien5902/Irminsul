@@ -1,0 +1,75 @@
+{
+    "genshin": {
+        "resin": "Résine Originelle",
+        "weapons": {
+            "Sword": "Épée à une main",
+            "Claymore": "Épée à deux mains",
+            "Catalyst": "Catalyseur",
+            "Polearm": "Lance",
+            "Bow": "Arc"
+        },
+        "element": "Élément",
+        "rarity" : "Rareté",
+        "weapon": "Arme",
+        "region": "Région",
+        "birthday" : "Anniversaire" ,
+        "talents": "Aptitudes",
+        "elevation": "Élévation",
+        "level": "Niveau",
+        "artifacts": "Artéfacts"
+    },
+
+    "commands":{
+        "resin":{
+            "name": "resin",
+            "desc": "Affiche votre nombre de résine originelle actuel",
+            "full": "Votre résine est pleine, il faut l'utiliser !",
+            "charging": "Votre résine sera complètement\n rechargée dans"
+        },
+        "info":{
+            "name": "info",
+            "desc":"Affiche les informations de genshin de la personne"
+        },
+        "desc":{
+            "name": "desc",
+            "desc": "Affiche la description du personnage"
+        },
+        "materials":{
+            "name":"materials",
+            "desc": "Affiche les matériaux requis pour améliorer le personnage"
+        },
+        "check-in":{
+            "name":"check-in",
+            "desc": "Connexion quotidienne Hoyolab",
+            "alreadyClaimed": "Vous avez déjà effectué votre connexion quotidienne aujourd'hui",
+            "reward": "Vous avez reçu :",
+            "mail": "Vérifiez votre messagerie en jeu!",
+            "state": "Votre connexion quotidienne automatique est : ",
+            "changedState": "Votre connexion quotidienne automatique est désormais : "
+        },
+        "farming":{
+            "name":"farming",
+            "desc":"Que farmer ?",
+            "farmable": "**Vous pouvez farmez :**"
+        }
+    },
+
+    "errors":{
+        "undefined": "Erreur",
+        "characterUnknown": "Personnage &1 innexistant, vérifiez l'orthographe.",
+        "sql": "Erreur SQL",
+        "wrongSubcommand":"Sous-commande éronnée",
+        "hoyolab": {
+            "notLinked":"&1 n'a pas lié son compte Hoyolab",
+            "unauthorized": "&1 n'autorise pas la vision de son profil genshin",
+            "linkRequired": "Vous devez d'abord lier votre compte Hoyolab"
+        },
+        "wip": "En cours de développement...",
+        "no_results": "Aucun résultat" 
+    },
+
+    "enabled": {
+        "true": "Activé",
+        "false": "Désactivé"
+    }
+}
