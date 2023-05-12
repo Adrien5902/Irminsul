@@ -41,21 +41,19 @@ class Account{
         let data = JSON.parse(fs.readFileSync("save.json").toString())
         let accounts = data.accounts
 
+        if(name){
+            accounts = accounts.filter(el => el.name.toLowerCase().includes(name.toLowerCase()))
+        }
+
+        if(gameId){
+            accounts = accounts.filter(el => el.gameId == gameId)
+        }
+        
         const res = []
         accounts.forEach(el => {
             let account = new Account(el)
             res.push(account)
         });
-
-        if(name){
-            res.filter(el => el.name.startsWith(name))
-        }
-
-        if(gameId){
-            res.filter(el => {return el.gameId == gameId})
-        }
-
-        // console.log(res)
 
         return res
     }
