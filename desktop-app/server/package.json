@@ -2,11 +2,15 @@
   "name": "irminsul-desktop-server",
   "version": "1.0.0",
   "description": "Irminsul Desktop Server App by Adrien5902",
-  "main": "src/load.js",
+  "main": "index.js",
   "keywords": [
     "Genshin",
     "Honkai"
   ],
   "author": "Adrien5902",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  }
 }
