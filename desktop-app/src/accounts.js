@@ -21,7 +21,8 @@ class Account{
     }
 
     set(){
-        Account.key(this.gameId).set(Account.miHoYotokenLoaction, Reg.REG_BINARY, this.token, (err)=>{
+        let key = Account.key(this.gameId)
+        key.set(Account.miHoYotokenLoaction, Reg.REG_BINARY, this.token, (err)=>{
             if(err){
                 throw err
             }
@@ -38,7 +39,7 @@ class Account{
     }
 
     static get(gameId = null, name = null){
-        let data = JSON.parse(fs.readFileSync("save.json").toString())
+        let data = JSON.parse(fs.readFileSync(__dirname+"/save.json").toString())
         let accounts = data.accounts
 
         if(name){
@@ -60,13 +61,13 @@ class Account{
 
     static add(gameId, name){
         return new Promise((resolve, reject)=>{
-            let data = JSON.parse(fs.readFileSync("save.json").toString())
+            let data = JSON.parse(fs.readFileSync(__dirname+"/save.json").toString())
             
             Account.key(gameId).get(Account.miHoYotokenLoaction, (err, res) => {
                 if(!err){
                     let account = new Account({gameId, token: res.value, name})
                     data.accounts.push(account)
-                    fs.writeFileSync("save.json", JSON.stringify(data))
+                    fs.writeFileSync(__dirname+"/save.json", JSON.stringify(data))
                     resolve()
                 }else{
                     reject(err)
@@ -76,6 +77,4 @@ class Account{
     }
 }
 
-module.exports = {
-    Account,
-}
+module.exports = Account

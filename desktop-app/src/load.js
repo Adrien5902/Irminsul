@@ -4,6 +4,12 @@ function createWindow () {
     const win = new BrowserWindow({
         width: 1080,
         height: 720,
+        webPreferences:{
+            nodeIntegration: true,
+            contextIsolation: false,
+        },
+        icon: "imgs/icon",
+        autoHideMenuBar: true
     })
 
     win.loadFile('src/index.html')

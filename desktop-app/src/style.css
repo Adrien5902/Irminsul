@@ -1,0 +1,112 @@
+body{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#content > *{
+    display: none;
+}
+
+#content{
+    margin-left: 160px;
+}
+
+#content > .focused{
+    display: block !important;
+}
+
+button, .button{
+    font-size: 1.2em;
+    padding: 12px;
+    border-radius: 3px;
+    margin: 10px;
+    border: 0;
+    cursor: pointer;
+    text-decoration: none;
+
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+#sidebar .focused{
+    font-weight: bold;
+}
+
+#sidebar{
+    height: 100%;
+    width: 160px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    color: #FFF;
+    overflow-x: hidden;
+    margin: 0;
+}
+
+#sidebar ul{
+    list-style: none;
+    padding: 0;
+}
+
+#sidebar ul > *{
+    padding: 4px 12px;
+    font-size: 18px;
+    cursor: pointer;
+    border-bottom: 2px solid #999;
+}
+
+#accounts > *{
+    width: 120px;
+    margin: 10px 20px;
+    background: #444;
+    color: white;
+    padding: 12px;
+    border-radius: 1em;
+    cursor: pointer;
+    box-shadow: 5px 5px 5px #333;
+    display: inline-flex;
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
+}
+
+.account{
+    width: inherit;
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#accounts > div:hover .account{
+    filter: brightness(35%);
+}
+
+#accounts .button{
+    background: green;
+    position: absolute;
+    margin: 0;
+}
+
+#accounts > div:hover .button{
+    display: block !important;
+}
+
+#accounts img{
+    width: inherit;
+    border-radius: 1em;
+}
+
+#error{
+    color: red;
+    background: #F99;
+    border: red dashed 2px;
+    border-radius: 1em;
+    padding: 8px;
+    outline: none;
+}
+
+dialog::backdrop{
+    background-color: hsl(0, 0%, 25%, .7);
+}

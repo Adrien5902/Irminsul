@@ -1,2 +1,2 @@
-const {Account} = require("./accounts.js");
-Account.get("hsr")
+const Account = require("./accounts.js");
+console.log(Account.get(null, "Adrien"))
