@@ -2,7 +2,7 @@
   "name": "irminsul-desktop",
   "version": "1.0.0",
   "description": "Irminsul Desktop App by Adrien5902",
-  "main": "src/index.js",
+  "main": "src/load.js",
   "scripts": {
     "start": "electron-forge start",
     "test": "echo \"Error: no test specified\" && exit 1",
