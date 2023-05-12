@@ -2,7 +2,7 @@ body{
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-#content > *{
+#content > *:not(dialog){
     display: none;
 }
 
@@ -110,4 +110,18 @@ button, .button{
 
 dialog::backdrop{
     background-color: hsl(0, 0%, 25%, .7);
+}
+
+dialog{
+    border-radius: 1em;
+}
+
+select, input{
+    width: -webkit-fill-available;
+    height: 2.5em;
+    font-size: 1.1em;
+    outline: none;
+    border: #555 solid 2px;
+    margin: 4px;
+    border-radius: .5em;
 }

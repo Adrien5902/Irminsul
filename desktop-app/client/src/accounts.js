@@ -68,7 +68,7 @@ class Account{
                     let account = new Account({gameId, token: res.value, name})
                     data.accounts.push(account)
                     fs.writeFileSync(__dirname+"/save.json", JSON.stringify(data))
-                    resolve()
+                    resolve(account)
                 }else{
                     reject(err)
                 }
