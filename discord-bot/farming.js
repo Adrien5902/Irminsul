@@ -2,7 +2,6 @@ const { questionMarkURL, con } = require('./functions.js');
 const fs = require("fs")
 const mysql = require('mysql');
 const {spawn} = require("child_process");
-const { type } = require('os');
 
 const toLevelUp = ["level", "weapon", "talents", "artifacts"]
 
