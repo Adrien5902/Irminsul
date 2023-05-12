@@ -58,7 +58,7 @@ for(let account of Account.get()){
     btn.innerHTML = "Jouer"
     div.appendChild(btn)
 
-    accounts.appendChild(div)
+    accounts.prepend(div)
 
     div.addEventListener("click", async(e)=>{
         try {
@@ -72,3 +72,8 @@ for(let account of Account.get()){
         }
     })
 }
+
+let addAccount = document.getElementById("add-account")
+addAccount.addEventListener("click", e => {
+    
+})
