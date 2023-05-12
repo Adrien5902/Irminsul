@@ -1,11 +1,5 @@
 const Account = require('./accounts');
-
-const games = {
-    genshin: {name: "Genshin Impact"},
-    hsr: {name: "Honkai: Star Rail"}
-}
-
-let content = document.getElementById("content")
+const Game = require("./games")
 
 function err(message = "Une erreur s'est produite."){
     let err = document.getElementById("error")
@@ -50,7 +44,7 @@ for(let account of Account.get()){
 
     let img = document.createElement("img")
     img.src = "imgs/games/" + account.gameId + ".png"
-    img.alt = games[account.gameId].name
+    img.alt = Game.list[account.gameId].name
     mainDiv.appendChild(img)
 
     let name = document.createElement("span")
@@ -66,9 +60,12 @@ for(let account of Account.get()){
 
     accounts.appendChild(div)
 
-    div.addEventListener("click", (e)=>{
+    div.addEventListener("click", async(e)=>{
         try {
             account.set()
+            let game = new Game(account.gameId)
+            await game.isRunning()
+            await game.run()
         } catch (error) {
             err(error.message)
             console.error(error)

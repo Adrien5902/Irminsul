@@ -16,6 +16,7 @@
   "author": "Adrien5902",
   "license": "ISC",
   "dependencies": {
+    "child_process": "^1.0.2",
     "electron-squirrel-startup": "^1.0.0",
     "fs": "^0.0.1-security",
     "winreg": "^1.2.4"
