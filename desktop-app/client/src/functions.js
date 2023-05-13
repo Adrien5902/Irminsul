@@ -1,6 +1,29 @@
 const Registery = require("winreg")
 const fs = require('fs');
-const { exec } = require("child_process")
+const { exec } = require("child_process");
+const { BrowserWindow } = require('electron')
+
+const errors = {
+    gameAlreadyRunning: new Error("Le jeu est déjà en cours d'exécution"),
+    gameNotRunning: new Error("Le jeu n'est pas lancé"),
+    gameDoesNotExist: new Error("Game does not exists"),
+    accountNotFound: new Error("Compte introuvable"),
+    missingDiscordInformation: new Error("Nous navons pas réussi à accéder aux informations de ton compte discord")
+} 
+
+class Save{
+    static location = __dirname + "/save.json"
+
+    static read(){
+        return JSON.parse(fs.readFileSync(this.location).toString())
+    }
+
+    static write(data){
+        let jsondata = JSON.stringify(data)
+        fs.writeFileSync(this.location, jsondata)
+        return jsondata
+    }
+}
 
 class Account{
     constructor(obj){
@@ -10,28 +33,30 @@ class Account{
 
     static unamed = "Sans nom"
 
-    static paths = {
-        genshin: "miHoYo\\Genshin Impact",
-        hsr: "Cognosphere\\Star Rail"
-    }
-
     static miHoYotokenLoaction = "miHoYoSDK_ADL_PROD_OVERSEA_h1158948810"
 
-    setName(name){
-        this.name = name
-    }
-
     set(){
-        let key = Account.key(this.gameId)
-        key.set(Account.miHoYotokenLoaction, Registery.REG_BINARY, this.token, (err)=>{
-            if(err){
-                throw err
+        return new Promise(async(resolve, reject)=>{
+            let game = new Game(this.gameId)
+            let isRunning = await game.isRunning()
+            
+            if(!isRunning){
+                let key = Account.key(this.gameId)
+                key.set(Account.miHoYotokenLoaction, Registery.REG_BINARY, this.token, (err)=>{
+                    if(err){
+                        reject(err)
+                    }else{
+                        resolve()
+                    }
+                })
+            }else{
+                reject(errors.gameAlreadyRunning)
             }
         })
     }
 
     static key(gameId){
-        const path = Account.paths[gameId]
+        const path = (new Game(gameId)).regPath
     
         return new Registery({
             hive: Registery.HKCU,
@@ -40,7 +65,7 @@ class Account{
     }
 
     static get(gameId = null, name = null){
-        let data = JSON.parse(fs.readFileSync(__dirname+"/save.json").toString())
+        let data = Save.read()
         let accounts = data.accounts
 
         if(name){
@@ -53,7 +78,7 @@ class Account{
         
         const res = []
         accounts.forEach(el => {
-            let account = new Account(el)
+            let account = new this(el)
             res.push(account)
         });
 
@@ -62,19 +87,46 @@ class Account{
 
     static add(gameId, name){
         return new Promise((resolve, reject)=>{
-            let data = JSON.parse(fs.readFileSync(__dirname+"/save.json").toString())
+            let data = Save.read()
             
-            Account.key(gameId).get(Account.miHoYotokenLoaction, (err, res) => {
+            this.key(gameId).get(this.miHoYotokenLoaction, (err, res) => {
                 if(!err){
-                    let account = new Account({gameId, token: res.value, name})
+                    let account = new this({gameId, token: res.value, name})
                     data.accounts.push(account)
-                    fs.writeFileSync(__dirname+"/save.json", JSON.stringify(data))
+                    Save.write(data)
                     resolve(account)
                 }else{
                     reject(err)
                 }
             })
         })
+    }
+
+    remove(){
+        let data = Save.read()
+        let index = data.accounts.findIndex(el => JSON.stringify(this) == JSON.stringify(el))
+
+        if(index < 0){
+            throw errors.accountNotFound
+        }else{
+            data.accounts.pop(index, 1)
+            Save.write(data)
+            return
+        }
+    }
+
+    rename(newname){
+        let data = Save.read()
+        let index = data.accounts.findIndex(el => JSON.stringify(this) == JSON.stringify(el))
+
+        if(index < 0){
+            throw errors.accountNotFound
+        }else{
+            this.name = newname
+            data.accounts[index] = this
+            Save.write(data)
+            return
+        }
     }
 }
 
@@ -84,12 +136,14 @@ class Game{
             fullname: "Genshin Impact", 
             name: "Genshin Impact",
             pathtoexe: "Genshin Impact game",
-            exe: "GenshinImpact"
+            regPath: "miHoYo\\Genshin Impact",
+            exe: "GenshinImpact",
         },
         hsr: {
             fullname: "Honkai: Star Rail",
             name: "Star Rail",
             pathtoexe: "Games",
+            regPath: "Cognosphere\\Star Rail",
             exe: "StarRail",
         }
     }
@@ -99,7 +153,7 @@ class Game{
             Object.assign(this, Game.list[id])
             this.id = id
         }else{
-            throw new Error("Game does not exists")
+            throw errors.gameDoesNotExist
         }
     }
 
@@ -125,14 +179,18 @@ class Game{
             console.log("Starting " + this.fullname)
             await this.getPath().then((path)=>{
                 let cmd = 'start "" "' + path + '\\' + this.pathtoexe + '\\' + this.exe + '.exe'
-                exec(cmd, (err)=>{
+                exec(cmd, (err, stdout, stderr)=>{
                     if(err){
                         throw err
+                    }else if(stderr){
+                        throw stderr
+                    }else{
+                        return stdout
                     }
                 })
             }).catch(err => {throw err})
         }else{
-            throw new Error("Le jeu est déjà lancé")
+            throw gameAlreadyRunning
         }
     }
 
@@ -148,6 +206,146 @@ class Game{
             })
         })
     }
+
+    close(){
+        return new Promise(async (resolve, reject) => {
+            let isRunning = await this.isRunning()
+            if(isRunning){
+                const cmd = 'taskkill /F /IM ' + this.exe + '.exe';
+                exec(`powershell -Command "Start-Process -Verb runAs '${cmd}'"`, (err, stdout, stderr)=>{
+                    if(err){
+                        reject(err)
+                    }else if(stderr){
+                        reject(stderr)
+                    }else{
+                        resolve(stdout)
+                    }
+                })
+            }else{
+                reject(errors.gameNotRunning)
+            }
+        })
+    }
 }
 
-module.exports = {Account, Game}
+class DiscordConn {
+    static auth(){
+        function getCode(win, beat = 100){
+            return new Promise((resolve, reject) => {
+                win.webContents.executeJavaScript("discord")
+                .then(discordInfo => {
+                    if(discordInfo){
+                        win.webContents.executeJavaScript("(new Proxy(new URLSearchParams(window.location.search), {get: (searchParams, prop) => searchParams.get(prop)})).code")
+                        .then(code => {
+                            resolve({discordInfo, code})
+                        })
+                    }else{
+                        setTimeout(()=>{
+                            getCode(win, beat)
+                            .then(resolve)
+                            .catch(reject)
+                        }, beat)
+                    }
+                })
+                .catch(err => {
+                    setTimeout(()=>{
+                        getCode(win, beat)
+                        .then(resolve)
+                        .catch(reject)
+                    }, beat)
+                })
+            })
+        }
+
+        return new Promise((resolve, reject) => {
+            try {
+                const authWindow = new BrowserWindow({
+                    width: 1080,
+                    height: 920,
+                    webPreferences: {
+                        nodeIntegration: false,
+                        contextIsolation: true,
+                        enableRemoteModule: false,
+                    },
+                    autoHideMenuBar: true,
+                });
+            
+                const authUrl = "https://adrien5902.ddns.net/genshin-impact/irminsul/hoyolab/check.php"
+                authWindow.loadURL(authUrl);
+            
+                getCode(authWindow)
+                .then(({discordInfo, code}) => {
+                    let save = Save.read()
+                    save.token = code
+                    save.discordInfo = discordInfo
+                    Save.write(save)
+                    authWindow.close()
+                    
+                    resolve({discordInfo, code})
+                })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    static getAccountInfo(){
+        let data = Save.read()
+        let info = data.discordInfo
+        if(info){
+            info.pdp = `https://cdn.discordapp.com/avatars/${info.id}/${info.avatar}.png`;
+            return info
+        }else{
+            throw errors.missingDiscordInformation
+        }
+    }
+}
+
+class Themes{
+    static list = [
+        "dark",
+        "light",
+    ]
+
+    static default = this.list[0]
+
+    static go(side = 1, currentTheme = this.getSave()){
+        let index = this.list.indexOf(currentTheme)
+        let theme = this.list[index + side]
+        if(!theme){
+            if(side > 0){
+                theme = this.list[0]
+            }else if(side < 0){
+                theme = this.list[this.list.length - 1]
+            }
+        }
+        this.set(theme)
+    }
+
+    static getSave(){
+        let {theme} = Save.read()
+        if(!theme){
+            theme = this.default
+        }
+        return theme
+    }
+
+    static set(theme){
+        document.body.setAttribute("theme", theme)
+        let save = Save.read()
+        save.theme = theme
+        Save.write(save)
+        let img = document.querySelector("#theme img")
+        img.src = "imgs/themes/" + theme + ".png"
+        img.alt = theme
+    }
+}
+
+module.exports = {
+    Account, 
+    Game, 
+    DiscordConn,
+    Themes,
+    Save,
+    errors,
+}

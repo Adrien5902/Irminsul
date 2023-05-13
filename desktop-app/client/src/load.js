@@ -1,5 +1,6 @@
 const { app, BrowserWindow } = require('electron')
 const fs = require("fs")
+const { DiscordConn, Themes, Save } = require('./functions');
 
 function createWindow () {
     const win = new BrowserWindow({
@@ -9,40 +10,41 @@ function createWindow () {
             nodeIntegration: true,
             contextIsolation: false,
         },
-        icon: "imgs/icon",
         autoHideMenuBar: true
     })
 
     win.loadFile('src/index.html')
+    return win
 }
 
 app.whenReady().then(() => {
-    createWindow()
-
-    app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow()
-        }
-    })
-
-    let save = "src/save.json"
-    let content = fs.readFileSync(save).toString()
     const defaultContent = {
-        accounts: []
+        accounts: [],
+        theme: Themes.default,
     }
-    if(!fs.existsSync(save) || !content){
-        fs.writeFileSync(save, JSON.stringify(defaultContent))
+
+    let content = fs.readFileSync(Save.location)
+    if(!fs.existsSync(Save.location) || !content){
+        Save.write(defaultContent)
     }else{
+        let data = JSON.parse(content)
         try{
-            let data = JSON.parse(content)
             for(let key of Object.keys(defaultContent)){
                 if(!data[key]){
                     data[key] = defaultContent[key]
                 }
             }
-            fs.writeFileSync(save, JSON.stringify(data))
+            Save.write(data)
+            if(data.token && data.discordInfo){
+                createWindow()
+            }else{
+                DiscordConn.auth()
+                .then(({discordInfo, code}) => {
+                    createWindow()
+                })
+            }
         }catch(err){
-            fs.writeFileSync(save, JSON.stringify(defaultContent))
+            Save.write(defaultContent)
         }
     }
 })

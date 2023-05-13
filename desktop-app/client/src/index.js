@@ -1,7 +1,6 @@
-const Account = require('./accounts');
-const Game = require("./games")
+const { Account, Game, DiscordConn, Themes, readSave } = require('./functions');
 
-function err(message = "Une erreur s'est produite."){
+function err(message = "Une erreur s'est produite.", buttons = [], showError = true){
     let err = document.getElementById("error")
     if(!err){
         err = document.createElement("dialog")
@@ -11,12 +10,76 @@ function err(message = "Une erreur s'est produite."){
             err.close()
         })
     }
-    err.innerHTML = "Erreur: " + message
+    err.innerHTML = showError ? "Erreur: " + message : message
     err.showModal()
+
+    let buttonDiv = document.createElement("div")
+    err.appendChild(buttonDiv)
+    for(let button of buttons){
+        let btn = document.createElement("button")
+        btn.innerHTML = button.text
+        btn.addEventListener("click", button.action)
+        buttonDiv.appendChild(btn)
+        if(button.style){
+            btn.style = button.style
+        }
+    }
 }
+
+function addRightClick(el, buttons){
+    el.addEventListener("contextmenu", e => {
+        e.preventDefault();
+
+        let contextMenu = document.getElementById("context-menu")
+        if(contextMenu){
+            contextMenu.remove()
+        }
+    
+        const { clientX: mouseX, clientY: mouseY } = e;
+    
+        contextMenu = document.createElement("div")
+        contextMenu.id = "context-menu"
+        document.body.appendChild(contextMenu)
+
+        contextMenu.style.top = `${mouseY}px`;
+        contextMenu.style.left = `${mouseX}px`;
+
+        for(let button of buttons){
+            let btn = document.createElement("span")
+            btn.innerHTML = button.text
+            if(button.style){
+                btn.style = button.style
+            }
+
+            btn.addEventListener("click", e => {
+                button.action()
+                contextMenu.remove()
+            })
+            
+            contextMenu.appendChild(btn)
+        }
+
+        let listener = document.body.addEventListener("click", e => {
+            contextMenu.remove()
+            document.body.removeEventListener("click", listener)
+        })
+    })
+}
+
+let content = document.querySelector("#content")
 
 function refreshAccounts(){
     let accounts = document.getElementById("accounts")
+
+    accounts.remove()
+    accounts = document.createElement("div")
+    accounts.id = "accounts"
+    accounts.classList.add("focused")
+    accounts.innerHTML = '<div id="add-account"><div class="account"><img src="imgs/+.png" alt="+"><span>En ajouter un</span></div></div>'
+    content.appendChild(accounts)
+
+    let addAccount = document.getElementById("add-account")
+    addAccount.addEventListener("click", showAddAccount)
 
     for(let account of Account.get()){
         let div = document.createElement("div")
@@ -34,7 +97,6 @@ function refreshAccounts(){
         name.innerHTML = account.name
         mainDiv.appendChild(name)
 
-
         let btn = document.createElement("span")
         btn.classList.add("button")
         btn.style.display = "none"
@@ -44,16 +106,70 @@ function refreshAccounts(){
         accounts.prepend(div)
 
         div.addEventListener("click", async(e)=>{
+            let game = new Game(account.gameId)
             try {
-                account.set()
-                let game = new Game(account.gameId)
-                await game.isRunning()
+                await account.set()
                 await game.run()
-            } catch (error) {
-                err(error.message)
-                console.error(error)
+            } catch (error) {   
+                err(error.message, /* [
+                    {
+                        text: "Fermer le jeu",
+                        action: e => {
+                            try{
+                                game.close()
+                            }catch(error){
+                                err(error.message)
+                            }
+                        }
+                    }
+                ] */)
             }
         })
+        
+        addRightClick(div, [
+            {
+                text: "Renommer", action: () => {
+                    let input = document.createElement("input")
+                    input.type = "text"
+                    input.value = name.innerHTML
+                    input.placeholder = "Nom"
+                    mainDiv.appendChild(input)
+                    input.focus()
+
+                    function rename(){
+                        if(input.value != ""){
+                            account.rename(input.value)
+                            refreshAccounts()
+                        }else{
+                            err("Le nom ne peut pas être vide")
+                            refreshAccounts()
+                        }
+                    }
+
+                    name.style.display = "none"
+
+                    input.addEventListener("change", e => {rename()})
+                    input.addEventListener("focusout", e => {rename()})
+                }
+            },{
+                text: 'Supprimer', style: "color: red;", action: () => {
+                    err("Êtes-vous sûr de vouloir supprimer ce compte ?", [
+                        {
+                            text: "Oui",
+                            action: e => {
+                                account.remove()
+                                refreshAccounts()
+                            }
+                        },
+                        {
+                            text: 'Non',
+                            style: 'color: white; background: red;',
+                            action: e => {}
+                        }
+                    ], false)
+                },
+            }
+        ])
     }
 }
 
@@ -79,11 +195,10 @@ sidebar.querySelectorAll("*").forEach(el => {
     }
 })
 
-let addAccount = document.getElementById("add-account")
 let addAccountDialog = document.getElementById("add-account-dialog")
 let gameSelect = addAccountDialog.querySelector('[name="game"]')
 
-addAccount.addEventListener("click", e => {
+function showAddAccount(e){
     addAccountDialog.showModal()
     
     addAccountDialog.addEventListener("click", e => {
@@ -105,7 +220,8 @@ addAccount.addEventListener("click", e => {
     submit.addEventListener("click", async e => {
         let game = new Game(gameSelect.value)
         if(await game.isRunning()){
-            Account.add(game.id, nameInput.value)
+            let name = nameInput.value != "" ? nameInput.value : null
+            Account.add(game.id, name)
             .then(acc => {
                 refreshAccounts()
             })
@@ -113,7 +229,7 @@ addAccount.addEventListener("click", e => {
             err("Veuillez ouvrir le jeu avant d'enregistrer le compte")
         }
     })
-})
+}
 
 for (id in Game.list){
     let game = Game.list[id]
@@ -121,4 +237,33 @@ for (id in Game.list){
     option.value = id
     option.innerHTML = game.fullname
     gameSelect.appendChild(option)
-}
+};
+
+let account = document.getElementById("account");
+(()=>{
+    let discordInfo = DiscordConn.getAccountInfo()
+
+    let pdp = document.createElement("img")
+    pdp.src = discordInfo.pdp
+    account.appendChild(pdp)
+
+    let name = document.createElement("span")
+    name.innerText = discordInfo.username
+    account.appendChild(name)
+
+    addRightClick(account, [
+        {
+            text: "Se déconnecter",
+            style: "color:red;",
+            action: ()=>{
+                let save = readSave()
+                save.token = null
+                save.discordInfo = null
+                
+                window.close()
+            }
+        }
+    ])
+})();
+
+Themes.go(0)

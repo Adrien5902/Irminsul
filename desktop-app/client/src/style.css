@@ -1,13 +1,74 @@
+*{
+    --sidebarSize: 200px;
+}
+
 body{
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--mainBG);
+    color: var(--mainTextColor);
 }
+
+body[theme="light"]{
+    --mainBG: #FFF;
+    --mainTextColor: #000;
+    --sidebarBG: #ddd;
+    --sidebarBordersColor: #bcbcbc;
+    --sidebarTextColor: #707070;
+    
+    --accountsBgColor: #999;
+    --accountsTextColor: #fff;
+
+    --lightImgFilter: invert(.7);
+    --darkImgFilter: invert(0);
+}
+
+body[theme="dark"]{
+    --mainBG: #222;
+    --mainTextColor: #FFF;
+    --sidebarBG: #333;
+    --sidebarBordersColor: #999;
+    --sidebarTextColor: #fff;
+
+    --accountsBgColor: #444;
+    --accountsTextColor: #fff;
+
+    --lightImgFilter: invert(0);
+    --darkImgFilter: invert(.7);
+}
+
+#account{
+    bottom: 0;
+    position: absolute;
+    margin: 0;
+    width: inherit;
+    height: 100px;
+    display: inline-flex;
+    align-items: center;
+}
+
+#account img{
+    height: -webkit-fill-available;
+    border-radius: 100%;
+    margin: 25px 8px;
+}
+
+#account span{
+    overflow: hidden;
+    font-weight: bold;
+    margin: 0 8px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: 1.2em;
+}
+
 
 #content > *:not(dialog){
     display: none;
 }
 
 #content{
-    margin-left: 160px;
+    margin-left: var(--sidebarSize);
+    font-size: 1.3em;
 }
 
 #content > .focused{
@@ -15,7 +76,7 @@ body{
 }
 
 button, .button{
-    font-size: 1.2em;
+    font-size: 1.1em;
     padding: 12px;
     border-radius: 3px;
     margin: 10px;
@@ -23,9 +84,13 @@ button, .button{
     cursor: pointer;
     text-decoration: none;
 
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+button:hover, .button:hover:not(#accounts .button){
+    filter: brightness(.6);
 }
 
 #sidebar .focused{
@@ -34,15 +99,17 @@ button, .button{
 
 #sidebar{
     height: 100%;
-    width: 160px;
+    width: var(--sidebarSize);
     position: fixed;
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #111;
-    color: #FFF;
+    color: var(--sidebarTextColor);
     overflow-x: hidden;
     margin: 0;
+    background-color: var(--sidebarBG);
+    border-top-right-radius: 1em;
+    border-bottom-right-radius: 1em;
 }
 
 #sidebar ul{
@@ -52,24 +119,26 @@ button, .button{
 
 #sidebar ul > *{
     padding: 4px 12px;
-    font-size: 18px;
+    font-size: 1.3em;
     cursor: pointer;
-    border-bottom: 2px solid #999;
+    border-bottom: 2px solid var(--sidebarBordersColor);
+    border-bottom-right-radius: .8em;
 }
 
 #accounts > *{
     width: 120px;
     margin: 10px 20px;
-    background: #444;
-    color: white;
+    background: var(--accountsBgColor);
+    color: var(--accountsTextColor);
     padding: 12px;
     border-radius: 1em;
     cursor: pointer;
-    box-shadow: 5px 5px 5px #333;
+    box-shadow: 8px 8px 8px var(--accountsBgColor);
     display: inline-flex;
     font-weight: bold;
     justify-content: center;
     align-items: center;
+    font-size: .8em;
 }
 
 .account{
@@ -79,12 +148,20 @@ button, .button{
     justify-content: center;
 }
 
+.account input{
+    font-size: 1em;
+    font-weight: bold;
+    color: white;
+    background: #333;
+    text-align: center;
+}
+
 #accounts > div:hover .account{
     filter: brightness(35%);
 }
 
 #accounts .button{
-    background: green;
+    background: rgb(0, 175, 0);
     color: #FFF;
     position: absolute;
     margin: 0;
@@ -99,9 +176,15 @@ button, .button{
     border-radius: 1em;
 }
 
+#accounts span{
+    margin-top: 8px;
+}
+
 #error{
-    color: red;
-    background: #F99;
+    color: white;
+    font-size: 1.1em;
+    font-weight: 500;
+    background: #ff4d4d;
     border: red dashed 2px;
     border-radius: 1em;
     padding: 8px;
@@ -124,4 +207,45 @@ select, input{
     border: #555 solid 2px;
     margin: 4px;
     border-radius: .5em;
+}
+
+#context-menu {
+    position: fixed;
+    z-index: 10000;
+    width: 150px;
+    background: #111;
+    border-radius: 5px;
+    color: #eee;
+    display: grid;
+    padding: 8px;
+}
+  
+#context-menu > * {
+    padding: 8px 10px;
+    font-size: 15px;
+    cursor: pointer;
+    border-radius: inherit;
+    background: #1a1a1a;
+    margin: 4px 0;
+}
+
+#context-menu > span:hover{
+    background: #333;
+}
+
+#theme{
+    --themeIconSize: 20px;
+    width: var(--themeIconSize);
+    height: var(--themeIconSize);
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 8px;
+    cursor: pointer;
+}
+
+#theme img{
+    width: var(--themeIconSize);
+    height: var(--themeIconSize);
+    filter: var(--lightImgFilter);
 }
