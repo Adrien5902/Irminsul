@@ -1,4 +1,4 @@
-const { Account, Game, DiscordConn, Themes, readSave } = require('./functions');
+const { Account, Game, DiscordConn, Themes, Save } = require('./functions');
 
 function err(message = "Une erreur s'est produite.", buttons = [], showError = true){
     let err = document.getElementById("error")
@@ -256,11 +256,17 @@ let account = document.getElementById("account");
             text: "Se déconnecter",
             style: "color:red;",
             action: ()=>{
-                let save = readSave()
+                let save = Save.read()
                 save.token = null
                 save.discordInfo = null
                 
-                window.close()
+                Save.write(save)
+
+                DiscordConn.auth()
+                .then(({discordInfo, code}) => {
+                    createWindow()
+                    window.close()
+                })
             }
         }
     ])
