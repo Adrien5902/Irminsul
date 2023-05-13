@@ -1,4 +1,5 @@
 const { app, BrowserWindow } = require('electron')
+const fs = require("fs")
 
 function createWindow () {
     const win = new BrowserWindow({
@@ -23,6 +24,27 @@ app.whenReady().then(() => {
             createWindow()
         }
     })
+
+    let save = "src/save.json"
+    let content = fs.readFileSync(save).toString()
+    const defaultContent = {
+        accounts: []
+    }
+    if(!fs.existsSync(save) || !content){
+        fs.writeFileSync(save, JSON.stringify(defaultContent))
+    }else{
+        try{
+            let data = JSON.parse(content)
+            for(let key of Object.keys(defaultContent)){
+                if(!data[key]){
+                    data[key] = defaultContent[key]
+                }
+            }
+            fs.writeFileSync(save, JSON.stringify(data))
+        }catch(err){
+            fs.writeFileSync(save, JSON.stringify(defaultContent))
+        }
+    }
 })
 
 app.on('window-all-closed', () => {
