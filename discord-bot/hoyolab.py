@@ -55,9 +55,14 @@ async def main(server, ltoken, ltuid, arg = "account"):
                     "characters": user.stats.characters,
                 },
                 info = info[0]
-            elif arg == "check-in":
+            elif arg == "gen-check-in":
                 try:
                     info = await client.claim_daily_reward(game="genshin")
+                except genshin.AlreadyClaimed:
+                    info = {"claimed": True}
+            elif arg == "hsr-check-in":
+                try:
+                    info = await client.claim_daily_reward(game="hkrpg")
                 except genshin.AlreadyClaimed:
                     info = {"claimed": True}
             elif arg == "calc":

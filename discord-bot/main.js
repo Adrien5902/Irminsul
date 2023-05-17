@@ -17,6 +17,14 @@ const client = new Discord.Client({
 
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`);
+
+	autoCheckIn()
+	cron.schedule("0 5 17 * * *", () => {
+		autoCheckIn()
+	});
+	cron.schedule("0 5 18 * * *", () => {
+		autoCheckIn()
+	});
 });
 
 const commands = [];
@@ -101,24 +109,23 @@ client.on(Events.InteractionCreate, async interaction => {
 client.login(TOKEN);
 
 function autoCheckIn(){
-	con.query("SELECT CONVERT(discordId USING utf8) as discordId FROM irminsul_hoyolab WHERE `check-in`= 1", async(err, res)=>{
+	con.query("SELECT `gen-check-in`, `hsr-check-in`, CONVERT(discordId USING utf8) as discordId FROM irminsul_hoyolab WHERE `gen-check-in`= 1 OR `hsr-check-in` = 1", async(err, res)=>{
 		console.log("Checking-in...")
 		if(!err){
 			for(let data of res){
 				let id = data.discordId
 				let user = await client.users.fetch(id)
-				checkIn(user)
+				const games = []
+				if(data["gen-check-in"]){
+					games.push("gen")
+				}
+				if(data["hsr-check-in"]){
+					games.push("hsr")
+				}
+				checkIn(user, games)
 			}
 		}else{
 			console.error(err)
 		}
 	})
 }
-
-autoCheckIn()
-cron.schedule("0 5 17 * * *", () => {
-	autoCheckIn()
-});
-cron.schedule("0 5 18 * * *", () => {
-	autoCheckIn()
-});

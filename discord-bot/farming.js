@@ -274,7 +274,7 @@ async function getFarming(auth = {code: 0, discordId: 0}, jour = true, level_min
         con.query(sql, (err, result) => {
             if(!err){
                 if(result && result[0]){
-                    const path = "C:/Users/adrie/Desktop/Irminsul/calcs/" + result[0].ltuid + ".json"
+                    const path = __dirname + "/calcs/" + result[0].ltuid + ".json"
                     if(fs.existsSync(path)){
                         fs.readFile(path, async(err, data)=>{
                             if(!err){

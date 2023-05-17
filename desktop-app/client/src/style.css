@@ -123,6 +123,16 @@ button:hover, .button:hover:not(#accounts .button){
     cursor: pointer;
     border-bottom: 2px solid var(--sidebarBordersColor);
     border-bottom-right-radius: .8em;
+    display: grid;
+}
+
+#sidebar ul > * > [sidebar]{
+    margin-left: 24px;
+    font-size: .8em;
+}
+
+#sidebar ul > * > [sidebar]::before{
+    content: '- ';
 }
 
 #accounts > *{

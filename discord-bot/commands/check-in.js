@@ -20,6 +20,16 @@ module.exports = {
                         .setDescription('Activé?')
                         .setRequired(false)
                 )
+                .addStringOption(option => 
+                    option
+                        .setName("jeu")
+                        .setDescription('Jeu en question')
+                        .setRequired(false)
+                        .addChoices(
+                            { name: 'Genshin Impact', value: 'gen' },
+                            { name: 'Honkai: Star Rail', value: 'hsr' },
+                        )
+                )
         ),
         
 	async execute(interaction) {
@@ -43,18 +53,19 @@ module.exports = {
                 }
             })
         }else if(subcommand == "auto"){
+            const game = interaction.options.getString("jeu") ?? "gen"
             const query = "SELECT * FROM irminsul_hoyolab WHERE discordId = '"+ user.id +"'"
             con.query(query, async(err, res)=>{
                 if(res){
                     if(res[0] && res[0].ltoken != "" && res[0].ltuid != "" && res[0].ltoken && res[0].ltuid){
                         const on = interaction.options.getBoolean("on") ?? null
                         if(on !== null){
-                            const query = "UPDATE irminsul_hoyolab SET `check-in`="+ Number(on) +" WHERE discordId = '"+ user.id +"'"
+                            const query = "UPDATE irminsul_hoyolab SET `" + game + "-check-in`="+ Number(on) +" WHERE discordId = '"+ user.id +"'"
                             con.query(query, async(err, res)=>{
                                 if(res){
                                     await interaction.editReply(reply(lang.commands["check-in"].changedState + lang.enabled[String(on)] + "\n", query))
                                     if(on === true){
-                                        checkIn(interaction.user)
+                                        checkIn(interaction.user, [game])
                                     }
                                 }else{
                                     await interaction.editReply(reply(lang.errors.sql + err + "\n", query))

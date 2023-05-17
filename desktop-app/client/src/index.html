@@ -9,8 +9,12 @@
     <body>
         <div id="sidebar">
             <ul>
-                <li for="main" class="focused">Accueil</li>
-                <li for="accounts">Comptes</li>
+                <li sidebar="main" class="focused">Accueil</li>
+                <li sidebar="accounts">Comptes</li>
+                <li>
+                    <label>Genshin</label>
+                    <span sidebar="genshin-affinity">Affinité</span>
+                </li>
             </ul>
 
             <div id="account"></div>
@@ -26,14 +30,17 @@
                     </div>
                 </div>
             </div>
+            <div id="genshin-affinity">
+
+            </div>
 
             <dialog id="add-account-dialog">
-                <form method="dialog">
+                <sidebarm method="dialog">
                     <input type="text" name="name" placeholder="Nom du compte">
                     <select name="game"></select>
                     
                     <button type="submit">Ajouter</button>
-                </form>
+                </sidebarm>
             </dialog>
         </div>
 

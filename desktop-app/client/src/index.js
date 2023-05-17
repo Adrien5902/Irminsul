@@ -175,8 +175,8 @@ function refreshAccounts(){
 
 let sidebar = document.getElementById("sidebar")
 
-sidebar.querySelectorAll("*").forEach(el => {
-    let menuId = el.getAttribute("for")
+sidebar.querySelectorAll("[sidebar]").forEach(el => {
+    let menuId = el.getAttribute("sidebar")
     let menu = document.getElementById(menuId)
     if(menu){
         el.addEventListener("click", (e)=>{

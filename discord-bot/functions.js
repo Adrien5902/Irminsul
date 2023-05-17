@@ -160,30 +160,34 @@ function itemEmbed(name, rarity, x = 1, source = null){
     return embed
 }
 
-async function checkIn(user, _callback){
+async function checkIn(user, games = []){
 	const lang = langs.fr
 	con.query("SELECT ltoken, ltuid, server FROM irminsul_hoyolab WHERE discordId = '"+ user +"'", async(err, result)=>{
 		if(!err){
 			if(result[0] && result[0].ltoken && result[0].ltuid && result[0].server){
 				const userData = result[0]
-				const python = spawn('python', ['hoyolab.py', userData.server, userData.ltoken, userData.ltuid, "check-in"]);
-				python.stdout.on('data', async (data) => {
-					data = await data.toString();
-					data = await JSON.parse(data)
-					if(!data.err){
-						if(!data.claimed){
-							let embed = new EmbedBuilder()
-							.setColor(0xffc400)
-							.setThumbnail(data.icon)
-							.addFields(
-								{name: data.name, value: "x"+data.amount},
-							)
-
-							console.log(user.username + " claimed daily rewards : x" + data.amount + " " + data.name)
-							user.send(reply("**"+lang.commands["check-in"].desc+ ":**\n" + lang.commands["check-in"].mail, false, [embed]))
+				for(let game of games){
+					const python = spawn('python', ['hoyolab.py', userData.server, userData.ltoken, userData.ltuid, game+"-check-in"]);
+					python.stdout.on('data', async (data) => {
+						data = await data.toString();
+						data = await JSON.parse(data)
+						if(!data.err){
+							if(!data.claimed){
+								let embed = new EmbedBuilder()
+								.setColor(0xffc400)
+								.setThumbnail(data.icon)
+								.addFields(
+									{name: data.name, value: "x"+data.amount},
+								)
+	
+								console.log(user.username + " claimed " + game + " daily rewards : x" + data.amount + " " + data.name)
+								user.send(reply("**"+lang.commands["check-in"].desc+ ":**\n" + lang.commands["check-in"].mail, false, [embed]))
+							}else{
+								console.log(user.username + " already claimed " + game + " daily rewards")
+							}
 						}
-					}
-				});
+					});
+				}
 			}
 		}
 	})

@@ -6,7 +6,7 @@ const cors = require("cors")
 const https = require('https')
 const {spawn} = require('child_process');
 const mysql = require('mysql');
-const { getFarming, refreshFarming} = require("./../../farming.js")
+const { getFarming, refreshFarming } = require("./../../discord-bot/farming")
 
 const requests = "/genshin-impact/irminsul/requests/"
 

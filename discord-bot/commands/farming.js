@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { reply, UnicodeToUTF, hoyolabLinked, colorByElements, questionMarkURL, defaultLang, con } = require('../functions.js');
 const fs = require("fs")
-const {getFarming, refreshFarming} = require("./../farming.js");
+const {getFarming, refreshFarming} = require("../farming.js");
 const { type } = require('os');
 
 String.prototype.UnicodeToUTF = UnicodeToUTF

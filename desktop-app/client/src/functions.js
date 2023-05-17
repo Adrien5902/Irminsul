@@ -235,7 +235,8 @@ class DiscordConn {
                 win.webContents.executeJavaScript("discord")
                 .then(discordInfo => {
                     if(discordInfo){
-                        win.webContents.executeJavaScript("(new Proxy(new URLSearchParams(window.location.search), {get: (searchParams, prop) => searchParams.get(prop)})).code")
+                        discordInfo = JSON.parse(discordInfo)
+                        win.webContents.executeJavaScript("authcode")
                         .then(code => {
                             resolve({discordInfo, code})
                         })
@@ -270,7 +271,7 @@ class DiscordConn {
                     autoHideMenuBar: true,
                 });
             
-                const authUrl = "https://adrien5902.ddns.net/genshin-impact/irminsul/hoyolab/check.php"
+                const authUrl = "https://adrien5902.ddns.net/genshin-impact/irminsul/hoyolab/"
                 authWindow.loadURL(authUrl);
             
                 getCode(authWindow)
@@ -340,6 +341,13 @@ class Themes{
         img.alt = theme
     }
 }
+
+class GenshinCharacter{
+    constructor(obj){
+    }
+}
+
+
 
 module.exports = {
     Account, 
