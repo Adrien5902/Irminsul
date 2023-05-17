@@ -1,7 +1,8 @@
 const Registery = require("winreg")
 const fs = require('fs');
 const { exec } = require("child_process");
-const { BrowserWindow } = require('electron')
+const { BrowserWindow } = require('electron');
+const { url } = require("inspector");
 
 const errors = {
     gameAlreadyRunning: new Error("Le jeu est déjà en cours d'exécution"),
@@ -293,7 +294,7 @@ class DiscordConn {
     static getAccountInfo(){
         let data = Save.read()
         let info = data.discordInfo
-        if(info){
+        if(info && info.id && info.avatar){
             info.pdp = `https://cdn.discordapp.com/avatars/${info.id}/${info.avatar}.png`;
             return info
         }else{
@@ -344,10 +345,58 @@ class Themes{
 
 class GenshinCharacter{
     constructor(obj){
+        Object.assign(this, obj)
+    }
+
+    static getOffline(){
+        let data = Save.read()
+        const characters = data.game_data.genshin
+        const res = []
+        for(let character of characters){
+            res.push(new this(character))
+        }
+        return res
+    }
+
+    static getOnline(){
+        return new Promise((resolve, reject)=>{
+            let data = Save.read()
+            fetch("characters")
+            .then(res => {
+                res.json()
+                .then(jsondata => {
+                    let characters = JSON.parse(jsondata)
+                    data.game_data.genshin.characters = characters
+                    Save.write(data)
+                    
+                    const res = []
+                    for(let character of characters){
+                        res.push(new this(character))
+                    }
+                    resolve(res)
+                }).catch(err => {
+                    reject(err)
+                })
+            }).catch(err => {
+                reject(err)
+            })
+        })
     }
 }
 
-
+const req = (dest, params) => new Promise((resolve, reject) => {
+    let url = new URL(dest, "https://adrien5902.ddns.net:3001")
+    for(let {name, value} of params){ 
+        url.searchParams.append(name, value)
+    }
+    fetch(url)
+    .then(res => {
+        res.json()
+        .then(data => {
+            resolve(data)
+        })
+    })
+})
 
 module.exports = {
     Account, 
@@ -355,5 +404,7 @@ module.exports = {
     DiscordConn,
     Themes,
     Save,
+    GenshinCharacter,
+    req,
     errors,
 }

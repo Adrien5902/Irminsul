@@ -1,5 +1,8 @@
 const puppeteer = require("puppeteer");
 const mysql = require('mysql');
+const {spawn} = require("child_process");
+const { prototype } = require("events");
+const { resolve } = require("path");
 
 const conn = mysql.createConnection({
     host: 'localhost',
@@ -103,6 +106,19 @@ class User{
     //         })
     //     })
     // }
+
+    hoyolab(arg = "account"){
+        const python = spawn('python', ['hoyolab.py', this.server, this.ltoken, this.ltuid, arg])
+        python.stdout.on('data', (data) => {
+            data = data.toString();
+            data = JSON.parse(data)
+            if(!data.err){
+                resolve(data)
+            }else{
+                reject(data.err)
+            }
+        });
+    }
 }
 
 

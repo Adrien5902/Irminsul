@@ -241,35 +241,42 @@ for (id in Game.list){
 
 let account = document.getElementById("account");
 (()=>{
-    let discordInfo = DiscordConn.getAccountInfo()
+    try {
+        let discordInfo = DiscordConn.getAccountInfo()
 
-    let pdp = document.createElement("img")
-    pdp.src = discordInfo.pdp
-    account.appendChild(pdp)
+        let pdp = document.createElement("img")
+        pdp.src = discordInfo.pdp
+        account.appendChild(pdp)
 
-    let name = document.createElement("span")
-    name.innerText = discordInfo.username
-    account.appendChild(name)
+        let name = document.createElement("span")
+        name.innerText = discordInfo.username
+        account.appendChild(name)
 
-    addRightClick(account, [
-        {
-            text: "Se déconnecter",
-            style: "color:red;",
-            action: ()=>{
-                let save = Save.read()
-                save.token = null
-                save.discordInfo = null
-                
-                Save.write(save)
+        addRightClick(account, [
+            {
+                text: "Se déconnecter",
+                style: "color:red;",
+                action: ()=>{
+                    let save = Save.read()
+                    save.token = null
+                    save.discordInfo = null
+                    
+                    Save.write(save)
 
-                DiscordConn.auth()
-                .then(({discordInfo, code}) => {
-                    createWindow()
-                    window.close()
-                })
+                    DiscordConn.auth()
+                    .then(({discordInfo, code}) => {
+                        createWindow()
+                        window.close()
+                    })
+                }
             }
-        }
-    ])
+        ])
+    } catch (error) {
+        console.error(error)   
+    }
 })();
 
-Themes.go(0)
+document.addEventListener("DOMContentLoaded", e => {
+    Themes.go(0)
+})
+

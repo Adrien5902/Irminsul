@@ -259,3 +259,12 @@ select, input{
     height: var(--themeIconSize);
     filter: var(--lightImgFilter);
 }
+
+.boxes > *{
+    border-radius: 1em;
+    text-align: center;
+    background: var(--sidebarBG);
+    padding: 8px;
+    color: var(--sidebarTextColor);
+    margin: 12px;
+}

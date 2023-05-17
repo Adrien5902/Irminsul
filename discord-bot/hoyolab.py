@@ -44,17 +44,7 @@ async def main(server, ltoken, ltuid, arg = "account"):
                 info = {"ar": fAcc.level, "name": fAcc.nickname,  "uid": fAcc.uid},
                 info = info[0]
             elif arg == "info":
-                user = await client.get_full_genshin_user(fAcc.uid)
-                info = {
-                    "ar": fAcc.level,
-                    "name": fAcc.nickname,
-                    "uid": fAcc.uid,
-                    "abyss": {"stars":user.abyss.current.total_stars,"floor":user.stats.spiral_abyss},
-                    "achievements": user.stats.achievements,
-                    "days_active": user.stats.days_active,
-                    "characters": user.stats.characters,
-                },
-                info = info[0]
+                info = await client.get_full_genshin_user(fAcc.uid)
             elif arg == "gen-check-in":
                 try:
                     info = await client.claim_daily_reward(game="genshin")

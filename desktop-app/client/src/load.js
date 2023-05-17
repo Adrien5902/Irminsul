@@ -23,18 +23,36 @@ app.whenReady().then(() => {
         theme: Themes.default,
     }
 
-    let content = fs.readFileSync(Save.location)
-    if(!fs.existsSync(Save.location) || !content){
+    if(!fs.existsSync(Save.location)){
         Save.write(defaultContent)
+        DiscordConn.auth()
+        .then(({discordInfo, code}) => {
+            createWindow()
+        })
     }else{
-        let data = JSON.parse(content)
-        try{
+        let content = fs.readFileSync(Save.location)
+        if(!content){
+            Save.write(defaultContent)
+            DiscordConn.auth()
+            .then(({discordInfo, code}) => {
+                createWindow()
+            })
+        }else{
+            let data
+            try{
+                data = JSON.parse(content)
+            }catch(err){
+                Save.write(defaultContent)
+                data = defaultContent
+            }
+
             for(let key of Object.keys(defaultContent)){
                 if(!data[key]){
                     data[key] = defaultContent[key]
                 }
             }
             Save.write(data)
+            
             if(data.token && data.discordInfo){
                 createWindow()
             }else{
@@ -43,8 +61,6 @@ app.whenReady().then(() => {
                     createWindow()
                 })
             }
-        }catch(err){
-            Save.write(defaultContent)
         }
     }
 })
